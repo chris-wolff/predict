@@ -40,22 +40,20 @@ def scrape_cve(cve_id) -> dict:
             "links": A list of all the links associated with the CVE
     """
     entry = {"id": cve_id}
-    url = "https://nvd.nist.gov/vuln/detail/{}".format(cve_id)
+    url = "https://services.nvd.nist.gov/rest/json/cve/1.0/{}".format(cve_id)
 
     response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
 
     # Non-existent CVE
-    if soup.find("p", {"data-testid": "service-unavailable-msg"}) is not None:
+    if not response.ok:
         return None
 
-    entry["desc"] = soup.find("p", {"data-testid": "vuln-description"}).text
+    data = response.json()
 
-    links = soup.find_all("td", {"data-testid": re.compile("vuln-hyperlinks-link-\d+")})
+    cve = data["result"]["CVE_Items"][0]["cve"]
 
-    entry["links"] = []
-    for link in links:
-        entry["links"].append(link.find("a").get("href"))
+    entry["desc"] = cve["description"]["description_data"][0]["value"]
+    entry["links"] = list(map(lambda reference: reference["url"], cve["references"]["reference_data"]))
 
     return entry
 
