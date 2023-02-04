@@ -1,5 +1,7 @@
 # Predict: CVE Labeling Tool
 
+### Note: This is a fork of a project that was created for University of Maryland's CMSC435 Software Engineering course.
+
 Predict is a tool meant for researchers looking to trace vulnerabilities back
 through the history of a code base. The tool centers around CVEs as a source
 of ground truth and offers many enhancements to the normal vulnerability tracing
